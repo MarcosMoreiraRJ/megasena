@@ -50,7 +50,6 @@ try:
 
         df_contagem["Visual"] = df_contagem["%"].apply(make_bar_html)
 
-        st.subheader("Distribuição dos Números por Quantidade de Linhas")
         st.markdown("<style>td {vertical-align: middle;}</style>", unsafe_allow_html=True)
 
         for _, row in df_contagem.iterrows():

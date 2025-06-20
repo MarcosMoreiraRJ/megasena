@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-# Título do app
-st.title("Distribuição de Linhas por Posição de Número Sorteado")
-
 # Upload do arquivo
 arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 

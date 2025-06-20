@@ -30,9 +30,6 @@ if arquivo is not None:
         df["Dezenas_lista"] = df["Dezenas"].apply(lambda x: [int(n.strip()) for n in x.split(",")])
             
         # -------- ANÁLISE DE PAR/ÍMPAR --------
-
-        st.subheader("Distribuição de Números Pares e Ímpares") # Exibe o título da seção
-
         
         df["Paridade"] = df["Dezenas_lista"].apply(contar_pares_impares) # Aplica a função que conta pares/ímpares para cada sorteio
         contagem_paridade = df["Paridade"].value_counts().sort_index() # Conta quantas vezes cada distribuição par/ímpar aparece

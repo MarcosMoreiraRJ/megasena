@@ -2,8 +2,6 @@ import streamlit as st # Importa a biblioteca Streamlit, usada para criar a inte
 import pandas as pd # Importa o pandas, usado para manipular os dados em formato de tabela (DataFrame)
 import altair as alt # Importa o Altair, biblioteca para criar gráficos interativos
 
-st.subheader("Distribuição dos Números por Quantidade de Colunas")
-
 # Cria um componente que permite o upload de um arquivo CSV pelo usuário
 arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
     

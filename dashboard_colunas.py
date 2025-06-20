@@ -36,7 +36,6 @@ try:
             "%": (contagem.values / total * 100).round(2)
         })
 
-        st.subheader("Distribuição dos Números por Quantidade de Colunas")
 
         chart = alt.Chart(df_contagem).mark_bar().encode(
             x=alt.X("%:Q", axis=alt.Axis(format=".2f")),

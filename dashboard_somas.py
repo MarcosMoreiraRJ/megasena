@@ -56,7 +56,6 @@ try:
 
         df_contagem["Visual"] = df_contagem["%"].apply(make_bar_html)
 
-        st.subheader("Distribuição dos Sorteios por Faixa de Soma")
         st.markdown("<style>td {{vertical-align: middle;}}</style>", unsafe_allow_html=True)
 
         for _, row in df_contagem.iterrows():
