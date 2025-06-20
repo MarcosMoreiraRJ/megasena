@@ -3,11 +3,11 @@ import pandas as pd     # Manipulação de dados em tabelas
 import altair as alt    # Geração de gráficos
 
 # Caminho fixo para o arquivo CSV
-CAMINHO_CSV = r"C:\Users\Marcos\Desktop\PC\CURSO PYTHON\resultados_megasena.csv"
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 
 try:
     # Carrega o CSV diretamente do disco
-    df = pd.read_csv(CAMINHO_CSV)
+    df = pd.read_csv(arquivo)
 
     if "Dezenas" in df.columns:
         df["Dezenas_lista"] = df["Dezenas"].apply(lambda x: [int(n.strip()) for n in x.split(",")])
@@ -70,6 +70,6 @@ try:
         st.warning("O arquivo precisa ter a coluna 'Dezenas' com os números separados por vírgula.")
 
 except FileNotFoundError:
-    st.error(f"Arquivo não encontrado no caminho:\n{CAMINHO_CSV}")
+    st.error(f"Arquivo não encontrado no caminho:\n{arquivo}")
 except Exception as e:
     st.error(f"Ocorreu um erro ao carregar o arquivo:\n{e}")

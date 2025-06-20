@@ -2,11 +2,10 @@ import streamlit as st # Importa a biblioteca Streamlit, usada para criar a inte
 import pandas as pd # Importa o pandas, usado para manipular os dados em formato de tabela (DataFrame)
 import altair as alt # Importa o Altair, biblioteca para criar gráficos interativos
 
-# Define o título da página exibido no topo da interface
-st.title("Ranking dos Números Mais Sorteados da Mega-Sena")
+st.subheader("Distribuição dos Números por Quantidade de Colunas")
 
 # Cria um componente que permite o upload de um arquivo CSV pelo usuário
-arquivo = st.file_uploader("Envie o arquivo .csv com os resultados da Mega-Sena", type=["csv"])
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
     
 # Verifica se o usuário enviou algum arquivo
 if arquivo is not None:

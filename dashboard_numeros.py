@@ -5,7 +5,7 @@ import pandas as pd
 st.title("Distribuição de Linhas por Posição de Número Sorteado")
 
 # Upload do arquivo
-arquivo = st.file_uploader("Envie o arquivo .csv com os resultados da Mega-Sena", type=["csv"])
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 
 # Se houver arquivo
 if arquivo is not None:

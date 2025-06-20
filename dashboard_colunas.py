@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-# Caminho fixo para o arquivo CSV
-CAMINHO_CSV = r"C:\Users\Marcos\Desktop\PC\CURSO PYTHON\resultados_megasena.csv"
+# Caminho direto para o arquivo CSV no GitHub (link RAW)
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 
 # Função que calcula quantas colunas diferentes os números ocupam no volante da Mega-Sena
 def calcular_colunas(numeros):
@@ -14,12 +14,10 @@ def calcular_colunas(numeros):
         colunas.add(coluna)
     return len(colunas)
 
-
 try:
-    # Carrega automaticamente o arquivo sem precisar de upload
-    df = pd.read_csv(CAMINHO_CSV)
+    # Lê diretamente o CSV do GitHub
+    df = pd.read_csv(arquivo)
 
-    # Verifica se a coluna "Dezenas" existe no arquivo
     if "Dezenas" in df.columns:
         df["Dezenas_lista"] = df["Dezenas"].apply(lambda x: [int(n.strip()) for n in x.split(",")])
         df["Colunas_Sorteadas"] = df["Dezenas_lista"].apply(calcular_colunas)
@@ -76,6 +74,6 @@ try:
         st.warning("O arquivo não contém a coluna 'Dezenas'.")
 
 except FileNotFoundError:
-    st.error(f"Arquivo não encontrado em:\n{CAMINHO_CSV}")
+    st.error(f"Arquivo não encontrado no caminho:\n{arquivo}")
 except Exception as e:
     st.error(f"Ocorreu um erro ao processar o arquivo:\n{e}")

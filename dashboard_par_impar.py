@@ -18,8 +18,7 @@ def contar_pares_impares(numeros):
     return f"{pares} Números Pares - {impares} Números Impares"  # Retorna string formatada
 
 # Permite que o usuário envie um arquivo CSV contendo os resultados da Mega-Sena
-arquivo = st.file_uploader(
-    "Envie o arquivo .csv com os resultados da Mega-Sena", type=["csv"])
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 
 # Se um arquivo for enviado
 if arquivo is not None:

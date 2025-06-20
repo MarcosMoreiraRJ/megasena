@@ -3,7 +3,7 @@ import pandas as pd
 import altair as alt
 
 # Caminho fixo para o arquivo CSV
-CAMINHO_CSV = r"C:\Users\Marcos\Desktop\PC\CURSO PYTHON\resultados_megasena.csv"
+arquivo = "https://raw.githubusercontent.com/MarcosMoreiraRJ/megasena/main/resultados_megasena.csv"
 
 # Função que calcula quantas linhas diferentes os números ocupam na cartela da Mega-Sena
 def calcular_linhas(numeros):
@@ -17,7 +17,7 @@ def calcular_linhas(numeros):
 
 # Tenta ler o arquivo direto do disco
 try:
-    df = pd.read_csv(CAMINHO_CSV)
+    df = pd.read_csv(arquivo)
 
     if "Dezenas" in df.columns:
         df["Dezenas_lista"] = df["Dezenas"].apply(lambda x: [int(n.strip()) for n in x.split(",")])
@@ -61,6 +61,6 @@ try:
         st.warning("O arquivo não contém a coluna 'Dezenas'.")
 
 except FileNotFoundError:
-    st.error(f"Arquivo não encontrado no caminho:\n{CAMINHO_CSV}")
+    st.error(f"Arquivo não encontrado no caminho:\n{arquivo}")
 except Exception as e:
     st.error(f"Ocorreu um erro ao carregar o arquivo:\n{e}")
