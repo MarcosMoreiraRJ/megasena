@@ -1,0 +1,85 @@
+from flask import Flask, render_template_string
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    html = """
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Dashboard Mega-Sena Interativo</title>
+      <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+      <style>
+        body {
+          font-family: sans-serif;
+          margin: 0;
+          padding: 20px;
+          background-color: #f9f9f9;
+        }
+        .grid-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+        .card {
+          background-color: white;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          padding: 16px;
+          cursor: move;
+        }
+        .card h2 {
+          margin-top: 0;
+        }
+        iframe {
+          width: 100%;
+          height: 400px;
+          border: none;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Dashboards Mega-Sena - Arraste e Organize</h1>
+      <div class="grid-container" id="dash-container">
+        <div class="card">
+          <h2>Número de Colunas</h2>
+          <iframe src="https://dashboardcolunaspy-probabilidades.streamlit.app/"></iframe>
+        </div>
+        <div class="card">
+          <h2>Número de Linhas</h2>
+          <iframe src="https://dashboardlinhaspy-probabilidades.streamlit.app/"></iframe>
+        </div>
+        <div class="card">
+          <h2>Proporção de cada Número</h2>
+          <iframe src="https://dashboardposicaopy-probabilidades.streamlit.app/"></iframe>
+        </div>
+        <div class="card">
+          <h2>Soma dos Números Sorteados</h2>
+          <iframe src="https://dashboardsomaspy-probabilidades.streamlit.app/"></iframe>
+        </div>
+        <div class="card">
+          <h2>Proporção de Par ou Ímpar</h2>
+          <iframe src="https://dashboardparimparpy-probabilidades.streamlit.app/"></iframe>
+        </div>
+        <div class="card">
+          <h2>Números mais Sorteados</h2>
+          <iframe src="https://dashboardmaiapprteadospy-probabilidades.streamlit.app/"></iframe>
+        </div>
+      </div>
+
+      <script>
+        new Sortable(document.getElementById("dash-container"), {
+          animation: 150,
+          ghostClass: 'blue-background-class'
+        });
+      </script>
+    </body>
+    </html>
+    """
+    return render_template_string(html)
+
+if __name__ == "__main__":
+    app.run(debug=True)
