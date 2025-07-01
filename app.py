@@ -1,8 +1,19 @@
 from flask import Flask, render_template_string
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
 
-app = Flask(__name__)
+# Importa os apps Dash de cada arquivo
+from dashboard_colunas import app as dash_colunas
+from dashboard_linhas import app as dash_linhas
+from dashboard_mais_sorteados import app as dash_mais
+from dashboard_par_impar import app as dash_par
+from dashboard_posicao import app as dash_posicao
+from dashboard_somas import app as dash_somas
 
-@app.route("/")
+# Cria o app Flask principal
+flask_app = Flask(__name__)
+
+@flask_app.route("/")
 def index():
     html = """
     <!DOCTYPE html>
@@ -46,27 +57,27 @@ def index():
       <div class="grid-container" id="dash-container">
         <div class="card">
           <h2>Número de Colunas</h2>
-          <iframe src="https://dashboardcolunaspy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/colunas/"></iframe>
         </div>
         <div class="card">
           <h2>Número de Linhas</h2>
-          <iframe src="https://dashboardlinhaspy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/linhas/"></iframe>
         </div>
         <div class="card">
           <h2>Proporção de cada Número</h2>
-          <iframe src="https://dashboardposicaopy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/posicao/"></iframe>
         </div>
         <div class="card">
           <h2>Soma dos Números Sorteados</h2>
-          <iframe src="https://dashboardsomaspy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/somas/"></iframe>
         </div>
         <div class="card">
           <h2>Proporção de Par ou Ímpar</h2>
-          <iframe src="https://dashboardparimparpy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/parimpar/"></iframe>
         </div>
         <div class="card">
           <h2>Números mais Sorteados</h2>
-          <iframe src="https://dashboardmaiapprteadospy-probabilidades.streamlit.app/"></iframe>
+          <iframe src="/mais_sorteados/"></iframe>
         </div>
       </div>
 
@@ -81,5 +92,15 @@ def index():
     """
     return render_template_string(html)
 
+# Usa DispatcherMiddleware para combinar Flask com múltiplos apps Dash
+application = DispatcherMiddleware(flask_app, {
+    "/colunas": dash_colunas.server,
+    "/linhas": dash_linhas.server,
+    "/mais_sorteados": dash_mais.server,
+    "/parimpar": dash_par.server,
+    "/posicao": dash_posicao.server,
+    "/somas": dash_somas.server
+})
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    run_simple("localhost", 8050, application, use_reloader=True, use_debugger=True)

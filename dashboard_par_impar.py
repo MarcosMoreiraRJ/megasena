@@ -1,6 +1,7 @@
 import streamlit as st # Importa o módulo Streamlit para criar interfaces web interativas
 import pandas as pd # Importa a biblioteca pandas para manipulação de dados em tabelas (DataFrames)
 import altair as alt # Importa a biblioteca Altair para visualizações de dados (gráficos)
+from dash import Dash, html
 
 # Função para calcular quantas colunas diferentes os números ocupam no volante da Mega-Sena
 def calcular_colunas(numeros):
@@ -88,3 +89,6 @@ if arquivo is not None:
 # Se nenhum arquivo foi enviado, mostra mensagem de informação
 else:
     st.info("Aguardando o envio do arquivo .csv...")
+
+app = Dash(__name__, requests_pathname_prefix="/dashboard_par_impar/")
+app.layout = html.Div("Dashboard Par ou Ímpar Mega-Sena")

@@ -1,92 +1,100 @@
-# Importa bibliotecas necessárias para manipulação de arquivos, tempo, expressões regulares e tratamento de erros
-import csv  # Para manipular arquivos CSV
-import time  # Para usar pausas entre requisições
-import re  # Para trabalhar com expressões regulares (extração de dados)
-import traceback  # Para imprimir rastreamento detalhado de erros
+import csv
+import time
+import re
+import os
+import traceback
 
-# Importa bibliotecas do Selenium para automação de navegador
-from selenium import webdriver  # Controla o navegador
-from selenium.webdriver.chrome.service import Service # Garante inicialização do ChromeDriver
-from selenium.webdriver.common.by import By  # Para selecionar elementos no HTML
-from selenium.webdriver.common.keys import Keys  # Para simular pressionar teclas
-from selenium.webdriver.support.ui import WebDriverWait # Espera por elementos de forma explícita
-from selenium.webdriver.support import expected_conditions as EC # Condições para esperar elementos
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException # Tratamento de erros do Selenium
-from webdriver_manager.chrome import ChromeDriverManager # Baixa e gerencia o ChromeDriver automaticamente
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from webdriver_manager.chrome import ChromeDriverManager
 
-# Define o nome do arquivo CSV onde os resultados serão salvos
 csv_filename = "resultados_megasena.csv"
 
-# Inicializa o navegador Chrome automaticamente com o WebDriver gerenciado
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+def obter_ultimo_concurso_salvo():
+    if not os.path.exists(csv_filename):
+        return 0
+    with open(csv_filename, "r", encoding="utf-8") as f:
+        linhas = list(csv.reader(f))
+        if len(linhas) < 2:
+            return 0
+        ultimo = linhas[-1][0]
+        return int(ultimo)
 
-# Define o tempo máximo de espera explícita para localizar elementos na página (15 segundos)
+# Se o arquivo não existir, cria com cabeçalho
+if not os.path.exists(csv_filename):
+    with open(csv_filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Concurso", "Data", "Dezenas"])
+
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 wait = WebDriverWait(driver, 15)
 
-# Cria (ou sobrescreve) o arquivo CSV com o cabeçalho padrão
-with open(csv_filename, "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
-    writer.writerow(["Concurso", "Data", "Dezenas"])  # Cabeçalho das colunas
-
 try:
-    # Abre a página da Mega-Sena no site da Caixa
     driver.get("https://loterias.caixa.gov.br/Paginas/Mega-Sena.aspx")
 
-    # Espera o carregamento do elemento com o número do concurso mais recente
-    span = wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "span.ng-binding")))
-
-    # Usa expressão regular para extrair o número do concurso mais recente da string do elemento
+    # Pega o número do concurso mais recente publicado
+    span = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.ng-binding")))
     match = re.search(r"Concurso\s+(\d+)", span.text)
-    # Converte para inteiro
-    concurso_atual = int(match.group(1)) if match else 0
+    concurso_mais_recente = int(match.group(1)) if match else 0
 
-    # Inicia um loop para buscar todos os concursos do 1 até o mais recente
-    for i in range(1, concurso_atual + 1):
+    ultimo_concurso_salvo = obter_ultimo_concurso_salvo()
+    print(f"Último na planilha: {ultimo_concurso_salvo}")
+    print(f"Mais recente no site: {concurso_mais_recente}")
+
+    novos_concursos = False
+
+    for i in range(ultimo_concurso_salvo + 1, concurso_mais_recente + 10):  # tenta buscar até 10 a mais, se houver
         try:
-            input_busca = wait.until(EC.presence_of_element_located((By.ID, "buscaConcurso"))) # Aguarda o campo de busca de concurso estar presente na página
-            input_busca.clear()  # Limpa o campo de busca
-            input_busca.send_keys(str(i))  # Digita o número do concurso desejado
-            input_busca.send_keys(Keys.ENTER)  # Pressiona ENTER
+            input_busca = wait.until(EC.presence_of_element_located((By.ID, "buscaConcurso")))
+            input_busca.clear()
+            input_busca.send_keys(str(i))
+            input_busca.send_keys(Keys.ENTER)
 
-            # Aguarda a página atualizar e exibir o número do concurso correto
-            wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, "span.ng-binding"), f"Concurso {i}"))
-            
-            # Aguarda o carregamento da lista com as dezenas sorteadas
+            # Espera o número aparecer ou desiste se não carregar
+            time.sleep(2)  # pequena espera para a mudança de conteúdo
+
+            try:
+                # Verifica se o concurso existe na página (texto do concurso deve bater)
+                span_atual = driver.find_element(By.CSS_SELECTOR, "span.ng-binding")
+                if f"Concurso {i}" not in span_atual.text:
+                    print(f"Concurso {i} ainda não está disponível.")
+                    break  # esse número (e os próximos) ainda não existem
+            except NoSuchElementException:
+                print(f"Concurso {i} ainda não disponível (nenhum span encontrado).")
+                break
+
             ul = wait.until(EC.presence_of_element_located((By.ID, "ulDezenas")))
-            
-            # Coleta as dezenas do sorteio em uma lista de strings
             numeros = [li.text for li in ul.find_elements(By.TAG_NAME, "li")]
 
-            # Novamente busca o span com o número e data do concurso atual
-            span = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.ng-binding")))   
-            m = re.search(r"Concurso\s+(\d+)\s+\(([\d/]+)\)", span.text)
-            concurso_num = m.group(1)  # Número do concurso
-            concurso_data = m.group(2)  # Data do sorteio
+            m = re.search(r"Concurso\s+(\d+)\s+\(([\d/]+)\)", span_atual.text)
+            concurso_num = m.group(1)
+            concurso_data = m.group(2)
 
-            # Abre o arquivo CSV em modo append ("a") para adicionar a nova linha com os dados do concurso
             with open(csv_filename, "a", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
                 writer.writerow([concurso_num, concurso_data, ", ".join(numeros)])
 
-            # Mostra no terminal o resultado que foi capturado
             print(f"Concurso {concurso_num} [{concurso_data}]: {numeros}")
+            novos_concursos = True
 
-        # Trata possíveis erros que possam ocorrer em cada iteração
         except (TimeoutException, NoSuchElementException, WebDriverException) as sub_e:
             print(f"Erro ao buscar concurso {i}: {sub_e}")
             traceback.print_exc()
-            continue  # Pula para o próximo concurso
+            break  # não continua se erro pode ser de concurso inexistente
 
-        # Aguarda 1 segundos antes de passar para o próximo concurso (evita sobrecarga no site)
         time.sleep(1)
 
-# Caso ocorra algum erro inesperado fora do loop
+    if not novos_concursos:
+        print("Planilha Atualizada.")
+
 except Exception as e:
     print("Erro durante o processo principal:", e)
     traceback.print_exc()
-
-# Encerra o navegador ao final do processo (com ou sem erro)
 finally:
     driver.quit()
     print("\nProcesso encerrado.")
