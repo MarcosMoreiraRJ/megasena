@@ -65,14 +65,14 @@ def index():
         </div>
         <div class="card">
           <h2>Proporção de Par ou Ímpar</h2>
-          <iframe src="/parimparposicao/"></iframe>
+          <iframe src="/par_impar/"></iframe>
         </div>
         <div class="card">
           <h2>Soma dos Números Sorteados</h2>
           <iframe src="/somas/"></iframe>
         </div>
         <div class="card">
-          <h2>Proporção de cada Número</h2>
+          <h2>Proporção de cada Posição</h2>
           <iframe src="/posicao/"></iframe>
         </div>
         <div class="card">
