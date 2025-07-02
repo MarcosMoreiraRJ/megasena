@@ -47,13 +47,13 @@ def index():
         }
         iframe {
           width: 100%;
-          height: 400px;
+          height: 100%;
           border: none;
         }
       </style>
     </head>
     <body>
-      <h1>Dashboards Mega-Sena - Arraste e Organize</h1>
+      <h1> Dashboards Mega-Sena </h1>
       <div class="grid-container" id="dash-container">
         <div class="card">
           <h2>Número de Colunas</h2>
@@ -64,16 +64,16 @@ def index():
           <iframe src="/linhas/"></iframe>
         </div>
         <div class="card">
-          <h2>Proporção de cada Número</h2>
-          <iframe src="/posicao/"></iframe>
+          <h2>Proporção de Par ou Ímpar</h2>
+          <iframe src="/parimparposicao/"></iframe>
         </div>
         <div class="card">
           <h2>Soma dos Números Sorteados</h2>
           <iframe src="/somas/"></iframe>
         </div>
         <div class="card">
-          <h2>Proporção de Par ou Ímpar</h2>
-          <iframe src="/parimpar/"></iframe>
+          <h2>Proporção de cada Número</h2>
+          <iframe src="/posicao/"></iframe>
         </div>
         <div class="card">
           <h2>Números mais Sorteados</h2>
