@@ -249,7 +249,7 @@ dash_somas = create_somas_app()
 flask_app = Flask(__name__)
 
 @flask_app.route("/")
-def index():  
+def index():
     return render_template_string("""
     <!DOCTYPE html>
     <html>
@@ -261,6 +261,54 @@ def index():
                 font-family: sans-serif;
                 padding: 30px;
                 background: #f9f9f9;
+            }
+            h1, h2 {
+                text-align: center;
+            }
+            .generator {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                margin-bottom: 40px;
+                border: 1px solid #ccc;
+            }
+            .generator h2 {
+                margin-top: 0;
+            }
+            .checkbox-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin: 20px 0;
+                justify-content: center;
+            }
+            .checkbox-group label {
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .generate-btn {
+                display: block;
+                margin: 0 auto;
+                padding: 10px 20px;
+                font-size: 16px;
+                font-weight: bold;
+                color: white;
+                background-color: #2ecc71;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .generate-btn:hover {
+                background-color: #27ae60;
+            }
+            .result {
+                text-align: center;
+                font-size: 24px;
+                margin-top: 20px;
+                font-weight: bold;
             }
             .grid-container {
                 display: grid;
@@ -286,14 +334,56 @@ def index():
     </head>
     <body>
         <h1>Dashboards Mega-Sena</h1>
+
+        <div class="generator">
+            <h2>Gerador Inteligente de Números</h2>
+            <form id="form-gerador" onsubmit="gerarNumeros(event)">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="chk_colunas" checked>Colunas</label>
+                    <label><input type="checkbox" id="chk_linhas" checked>Linhas</label>
+                    <label><input type="checkbox" id="chk_parimpar" checked>Par/Ímpar</label>
+                    <label><input type="checkbox" id="chk_somas" checked>Somas</label>
+                    <label><input type="checkbox" id="chk_posicao" checked>Posição</label>
+                </div>
+                <button type="submit" class="generate-btn">Gerar Números</button>
+            </form>
+            <div class="result" id="resultado-gerado">[  ]</div>
+        </div>
+
         <div class="grid-container">
+            <div class="card card-wide"><h2>Posição</h2><iframe src="/posicao/"></iframe></div>
             <div class="card"><h2>Número de Colunas</h2><iframe src="/colunas/"></iframe></div>
             <div class="card"><h2>Número de Linhas</h2><iframe src="/linhas/"></iframe></div>
             <div class="card"><h2>Par ou Ímpar</h2><iframe src="/parimpar/"></iframe></div>
             <div class="card"><h2>Somas</h2><iframe src="/somas/"></iframe></div>
-            <div class="card card-wide"><h2>Posição</h2><iframe src="/posicao/"></iframe></div>
             <div class="card card-wide"><h2>Mais Sorteados</h2><iframe src="/mais_sorteados/"></iframe></div>
         </div>
+
+        <script>
+            function gerarNumeros(event) {
+                event.preventDefault();
+
+                const usarPosicao = document.getElementById("chk_posicao").checked;
+                const usarColunas = document.getElementById("chk_colunas").checked;
+                const usarLinhas = document.getElementById("chk_linhas").checked;
+                const usarParImpar = document.getElementById("chk_parimpar").checked;
+                const usarSomas = document.getElementById("chk_somas").checked;
+
+                const criterios = [];
+                if (usarPosicao) criterios.push("Posição");
+                if (usarColunas) criterios.push("Colunas");
+                if (usarLinhas) criterios.push("Linhas");
+                if (usarParImpar) criterios.push("Par/Ímpar");
+                if (usarSomas) criterios.push("Somas");
+                
+                // Essa lógica ainda é apenas placeholder para futura integração com backend
+                const numerosAleatorios = Array.from({length: 6}, () => Math.floor(Math.random() * 60) + 1)
+                    .sort((a, b) => a - b);
+
+                document.getElementById("resultado-gerado").innerText = 
+                    "Critérios usados: " + criterios.join(", ") + "\\nNúmeros gerados: " + numerosAleatorios.join(", ");
+            }
+        </script>
     </body>
     </html>
     """)
